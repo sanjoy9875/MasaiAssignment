@@ -9,8 +9,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      
+    
+      debugShowCheckedModeBanner: false,
        home: Scaffold(
+         drawer: Drawer(),
+         appBar: AppBar(
+           backgroundColor: Colors.purple[700],
+           title: Text('Instagram'),
+         ),
           backgroundColor: Colors.black,
           body: Center(
             child: Column(
