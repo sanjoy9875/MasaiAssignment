@@ -14,9 +14,16 @@ class _TaskState extends State<Task> {
   bool validated = true;
   String errtext = "";
   List<String> myitems = [];
- 
+  List<String> newitems = [];
 
+  void onChanged(){
+    setState(() {
+      newitems = myitems;
+    });
+  }
+  
   void showAlertDialog() {
+    texteditingcontroller.text = "";
     showDialog(
         context: context,
         builder: (context) {
@@ -62,7 +69,8 @@ class _TaskState extends State<Task> {
                              setState((){
                                String text = texteditingcontroller.text.toString();
                                 myitems.add('$text');
-                                validated = true;                                
+                                validated = true; 
+                                onChanged();                               
                              });                             
                             }                            
                           },
@@ -149,7 +157,7 @@ class _TaskState extends State<Task> {
                             children: [
                               Padding(
                                 padding: const EdgeInsets.all(10.0),
-                                child: Text('${myitems[index]}',
+                                child: Text('${newitems[index]}',
                                 style: TextStyle(
                                   fontSize: 20,
                                   color: Colors.white,
