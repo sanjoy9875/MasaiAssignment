@@ -1,11 +1,10 @@
 import 'dart:ui';
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:sqflite/sqflite.dart';
-import 'package:yellow_class_assignment/database_helper.dart';
-import 'package:yellow_class_assignment/movie.dart';
-import 'package:yellow_class_assignment/movie_detail.dart';
+import 'package:yellow_class_assignment/database/database_helper.dart';
+import '../model/movie.dart';
+import 'movie_detail.dart';
 
 class MovieList extends StatefulWidget {
 
@@ -35,7 +34,7 @@ class _MovieListState extends State<MovieList> {
       body: getMovieList(),
       floatingActionButton: FloatingActionButton(
         onPressed: (){
-           navigateToMovieDetail(Movie('', '', '',''),'Add Movie');
+           navigateToMovieDetail(Movie('', '', '',null),'Add Movie');
         },
         child: Icon(Icons.add),
       ),

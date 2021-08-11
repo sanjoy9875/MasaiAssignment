@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:yellow_class_assignment/database_helper.dart';
-import 'package:yellow_class_assignment/movie.dart';
+import 'package:yellow_class_assignment/database/database_helper.dart';
+import 'package:yellow_class_assignment/model/movie.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MovieDetail extends StatefulWidget {
@@ -18,6 +18,7 @@ class MovieDetail extends StatefulWidget {
 class _MovieDetailState extends State<MovieDetail> {
 
   PickedFile? _imageFile;
+  String? imageString;
   final ImagePicker _picker = ImagePicker();
 
    late String appBarTitle;
@@ -34,7 +35,9 @@ class _MovieDetailState extends State<MovieDetail> {
 
     movieNameController.text = movie.movie! ;
     directorNameController.text = movie.director!;
-    _imageFile = File(movie.image!) as PickedFile?;
+    if(imageString==null){
+       imageString = movie.image;
+    }
 
     return  Scaffold(
         appBar: AppBar(
@@ -54,10 +57,11 @@ class _MovieDetailState extends State<MovieDetail> {
                 children: [
                   CircleAvatar(
                     radius: 80.0,
-                    backgroundImage: _imageFile==null?
+                    backgroundImage: imageString==null?
                     AssetImage('assets/bill_gates.png'):
-                   FileImage(File(_imageFile!.path)) as ImageProvider,
-                  ),
+                   FileImage(File(imageString!)) as ImageProvider,
+                   
+                  ),                 
                   Positioned(
                     bottom: 20,
                     right: 20,
@@ -65,7 +69,7 @@ class _MovieDetailState extends State<MovieDetail> {
                       onTap: (){
                           getPhoto(ImageSource.gallery);                                                                           
                       },
-                      child: Icon(Icons.add,size: 30,color: Colors.white),
+                      child: Icon(Icons.add_circle,size: 50,color: Colors.white38),
                       ),
                     ),
                 ],
@@ -144,7 +148,8 @@ class _MovieDetailState extends State<MovieDetail> {
     // ignore: deprecated_member_use
     final pickedFile = await _picker.getImage(source: source);
     setState(() {
-      _imageFile = pickedFile!;
+      _imageFile = pickedFile!;  
+      imageString = _imageFile!.path;
     
     });
   }
@@ -166,7 +171,7 @@ class _MovieDetailState extends State<MovieDetail> {
 
       moveToLastScreen();
       movie.date = DateFormat.yMMMd().format(DateTime.now());
-      movie.image = _imageFile!.path;
+      movie.image = imageString;
       print('image from gallery ${movie.image}');
       int result ;
 
@@ -177,9 +182,9 @@ class _MovieDetailState extends State<MovieDetail> {
           result = await helper.insertMovie(movie);
       }
       if (result != 0) {  // Success
-			_showAlertDialog('Status', 'Note Saved Successfully');
+			_showAlertDialog('Status', 'Movie Saved Successfully');
 		} else {  // Failure
-			_showAlertDialog('Status', 'Problem Saving Note');
+			_showAlertDialog('Status', 'Problem Saving Movie');
 		}
   }
 
@@ -190,14 +195,14 @@ class _MovieDetailState extends State<MovieDetail> {
 		// Case 1: If user is trying to delete the NEW NOTE i.e. he has come to
 		// the detail page by pressing the FAB of NoteList page.
 		if (movie.id == null) {
-			_showAlertDialog('Status', 'No Note was deleted');
+			_showAlertDialog('Status', 'No Movie was deleted');
 			return;
 		}
 
 		// Case 2: User is trying to delete the old note that already has a valid ID.
 		int result = await helper.deleteMovie(movie.id!);
 		if (result != 0) {
-			_showAlertDialog('Status', 'Note Deleted Successfully');
+			_showAlertDialog('Status', 'Movie Deleted Successfully');
 		} else {
 			_showAlertDialog('Status', 'Error Occured while Deleting Note');
 		}
