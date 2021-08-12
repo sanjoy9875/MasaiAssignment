@@ -1,8 +1,11 @@
 import 'dart:ui';
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yellow_class_assignment/database/database_helper.dart';
+import '../google_sign_in.dart';
 import '../model/movie.dart';
 import 'movie_detail.dart';
 
@@ -21,15 +24,25 @@ class _MovieListState extends State<MovieList> {
   @override
   Widget build(BuildContext context) {
 
+    // ignore: unused_local_variable
+    final user = FirebaseAuth.instance.currentUser;
+
       if(movieList==null){ 
         movieList = [];    
         updateListView();
       }
-
     return Scaffold(
-
       appBar: AppBar(
         title: Text("Movies"),
+        actions: <Widget>[
+          TextButton(
+            child: Text('LogOut',style: TextStyle(color: Colors.white,fontSize: 16),),
+                  onPressed: () {
+                     final provider = Provider.of<GoogleSignInProvider>(context,listen:false);
+                     provider.logout();
+               },
+              ),
+            ],
       ),
       body: getMovieList(),
       floatingActionButton: FloatingActionButton(
@@ -116,7 +129,7 @@ class _MovieListState extends State<MovieList> {
   void _showSnackBar(BuildContext context, String message) {
 
 		final snackBar = SnackBar(content: Text(message));
-		Scaffold.of(context).showSnackBar(snackBar);
+		ScaffoldMessenger.of(context).showSnackBar(snackBar);
 	}
 
   void updateListView() {
