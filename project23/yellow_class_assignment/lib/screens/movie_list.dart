@@ -1,11 +1,12 @@
 import 'dart:ui';
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:yellow_class_assignment/database/database_helper.dart';
-import '../google_sign_in.dart';
+import '../authentication/google_sign_in.dart';
 import '../model/movie.dart';
 import 'movie_detail.dart';
 
@@ -20,6 +21,7 @@ class _MovieListState extends State<MovieList> {
   DatabaseHelper databaseHelper = DatabaseHelper();
   List<Movie>? movieList;
   int count = 0;
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,57 +60,66 @@ class _MovieListState extends State<MovieList> {
 
     return ListView.builder(
       itemCount: count,
-      itemBuilder:(BuildContext context, int position){
+      itemBuilder:(BuildContext context, int position){   
         return Padding(
           padding: const EdgeInsets.all(4.0),
           child: Card(
-            color: Colors.white,
+            color: Colors.white12,
             elevation: 2.0,
 
-            child: Row(
+            child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4,top: 4,bottom: 4),
-                    child: CircleAvatar(
-                    radius: 40.0,
-                    backgroundImage: 
-                   FileImage(File('${this.movieList![position].image!}')),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+
+                    child: Image(image: FileImage(File('${this.movieList![position].image!}'))),
                   ),
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
+                ),
+                 Padding(
                         padding: const EdgeInsets.only(bottom: 3),
-                        child: Text(
-                          '${this.movieList![position].movie!}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20
-                            ),),
+                        child: Expanded(
+                          child: Text(
+                            'Movie: ${this.movieList![position].movie!}',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18
+                                ),
+                              ),
+                        ),
                       ),
                       Padding(
                         padding: const EdgeInsets.only(top: 3),
-                        child: Text('${this.movieList![position].director!}'),
+                        child: Expanded(child: Text('Director: ${this.movieList![position].director!}')),
                       ),
-                    ],
-                  ),
-                  GestureDetector(
-                    child: Icon(Icons.edit),
-                     onTap: (){
-                          navigateToMovieDetail(this.movieList![position],'Edit Movie');
-                        },
+                      SizedBox(height: 4),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8,bottom: 8,right: 16),
+                              child: GestureDetector(
+                              child: Icon(Icons.edit,size: 30,),
+                              onTap: (){
+                                  navigateToMovieDetail(this.movieList![position],'Edit Movie');
+                                },
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: GestureDetector(
-                      child: Icon(Icons.delete),
-                       onTap: (){
-                           _delete(context, movieList![position]);
-                          },
-                      ),
-                    ),
+                            ),
+                     Padding(
+                       padding: const EdgeInsets.only(top: 8,bottom: 8,left: 16),
+                       child: GestureDetector(
+                          child: Icon(Icons.delete,size: 30,),
+                           onTap: (){
+                               _delete(context, movieList![position]);
+                              },
+                          ),
+                     ),
+                          ],
+                        ),
+                      ),                
               ],
             ),
           ),
@@ -118,6 +129,7 @@ class _MovieListState extends State<MovieList> {
 
   }
 
+//delete the movie by clicking delete icon
   void _delete(BuildContext context,Movie movie)async{
       int result = await databaseHelper.deleteMovie(movie.id!);
       if (result != 0) {
@@ -126,12 +138,14 @@ class _MovieListState extends State<MovieList> {
 		}
   }
 
+
   void _showSnackBar(BuildContext context, String message) {
 
 		final snackBar = SnackBar(content: Text(message));
 		ScaffoldMessenger.of(context).showSnackBar(snackBar);
 	}
 
+//update the listView when new item will add or delete
   void updateListView() {
 
 		final Future<Database> dbFuture = databaseHelper.initializeDatabase();

@@ -20,7 +20,6 @@ class _MovieDetailState extends State<MovieDetail> {
   PickedFile? _imageFile;
   String? imageString;
   final ImagePicker _picker = ImagePicker();
-
    late String appBarTitle;
    Movie movie;
   _MovieDetailState(this.movie,this.appBarTitle);
@@ -59,8 +58,7 @@ class _MovieDetailState extends State<MovieDetail> {
                     radius: 80.0,
                     backgroundImage: imageString==null?
                     AssetImage('assets/bill_gates.png'):
-                   FileImage(File(imageString!)) as ImageProvider,
-                   
+                   FileImage(File(imageString!)) as ImageProvider,                
                   ),                 
                   Positioned(
                     bottom: 20,
@@ -144,6 +142,7 @@ class _MovieDetailState extends State<MovieDetail> {
     );
   }
 
+//function getPhoto from gallery
   void getPhoto(ImageSource source)async{
     // ignore: deprecated_member_use
     final pickedFile = await _picker.getImage(source: source);
@@ -167,6 +166,7 @@ class _MovieDetailState extends State<MovieDetail> {
     movie.director = directorNameController.text;
   }
 
+//function save data to the database
   void _save()async{
 
       moveToLastScreen();
@@ -188,6 +188,7 @@ class _MovieDetailState extends State<MovieDetail> {
 		}
   }
 
+//function delete data from the database
   void _delete() async {
 
 		moveToLastScreen();
@@ -208,6 +209,7 @@ class _MovieDetailState extends State<MovieDetail> {
 		}
 	}
 
+//function show a dialog after saving item
   void _showAlertDialog(String title, String message) {
 
 		AlertDialog alertDialog = AlertDialog(
